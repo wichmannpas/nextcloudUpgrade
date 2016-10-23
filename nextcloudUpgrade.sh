@@ -1,26 +1,26 @@
 #!/bin/bash
-# This script automatically upgrades a owncloud installation and creates a backup of all important data before doing so
+# This script automatically upgrades a nextcloud installation and creates a backup of all important data before doing so
 # Copyright (c) 2015 Pascal Wichmann
 
-owncloudPath="/srv/http/owncloud/" # change to fit path of you owncloud installation
-owncloudDataPath="/srv/webdata/owncloud/" # change to fit path of your owncloud data directory
+nextcloudPath="/srv/http/nextcloud/" # change to fit path of you nextcloud installation
+nextcloudDataPath="/srv/webdata/nextcloud/" # change to fit path of your nextcloud data directory
 backupDir="/backup" # change to fit path where your backup should be placed
 backupVersions=5
 mysqlBackup=false  # to enable mysql backup, your user needs to have a valid mysql client configuration (i.e. .my.cnf) in order to authenticate; it may be possible to authenticate interactively, however, the easiest way is to configure the mysql client correctly
-mysqlBackup_database="owncloud"
+mysqlBackup_database="nextcloud"
 webUser="www-data"
 phpPath="/usr/bin/php"
 
 if [ "$1" == "-h" ] || [ "$1" == "" ]; then
-  echo "Usage: owncloudUpgrade.sh version"
+  echo "Usage: nextcloudUpgrade.sh version"
   echo " version: You need to specify the version which should be installed (i.e. 8.2.2)"
-  echo "Script written by Pascal Wichmann, Copyright (c) 2015"
+  echo "Script written by Pascal Wichmann, Copyright (c) 2016"
   exit 0
 fi
 
 # check if temporary directory exists (Indicating a running process of this upgrade script)
-if [ -d "/tmp/owncloudUpgrade" ]; then
-  echo "Temporary directory /tmp/owncloudUpgrade is already existing. Remove it  and start the script again, but first make sure that there is NO OTHER INSTANCE of this script running."
+if [ -d "/tmp/nextcloudUpgrade" ]; then
+  echo "Temporary directory /tmp/nextcloudUpgrade is already existing. Remove it  and start the script again, but first make sure that there is NO OTHER INSTANCE of this script running."
   exit 0
 fi
 
@@ -30,7 +30,7 @@ if ! [ -z $(echo $backupVersions | tr -d 0-9) ] || [ -z "$backupVersions" ]; the
   exit 0
 fi
 
-# TODO: create a dedicated script for backup which is executed separately (to have the ability to create automated owncloud backups withouth upgrade)
+# TODO: create a dedicated script for backup which is executed separately (to have the ability to create automated nextcloud backups withouth upgrade)
 
 echo "Creating backup"
 
@@ -50,7 +50,8 @@ done
 mkdir -p ${backupDir}/backup.0/files
 
 # create backup of files
-rsync -a ${owncloudPath} ${backupDir}/backup.0/files
+rsync -a ${nextcloudPath} ${backupDir}/backup.0/files
+rsync -a ${nextcloudDataPath} ${backupDir}/backup.0/files
 
 # create backup of database (if enabled)
 if [ $mysqlBackup = true ]; then
@@ -58,31 +59,32 @@ if [ $mysqlBackup = true ]; then
 fi
 
 echo "backup finished"
-echo "starting owncloud upgrade"
+echo "starting nextcloud upgrade"
 
 # create temporary directory
-mkdir /tmp/owncloudUpgrade
-cd /tmp/owncloudUpgrade
+mkdir /tmp/nextcloudUpgrade
+cd /tmp/nextcloudUpgrade
 
-# download owncloud archive and extract it
-curl https://download.owncloud.org/community/owncloud-${1}.tar.bz2 | tar -xj
+# download nextcloud archive and extract it
+curl https://download.nextcloud.com/server/releases/nextcloud-${1}.tar.bz2 | tar -xj
 
-# turn owncloud maintenance mode on
-sudo -u $webUser $phpPath ${owncloudPath}occ maintenance:mode --on
+# turn nextcloud maintenance mode on
+sudo -u $webUser $phpPath ${nextcloudPath}occ maintenance:mode --on
 
 # move new files
-rsync -a owncloud/ $owncloudPath
+rsync -a nextcloud/ $nextcloudPath
 
 # set correct permissions on new files
-chown -R $webUser:$webUser $owncloudPath
+chown -R $webUser:$webUser $nextcloudPath
 
 # turn maintenance mode off
-sudo -u $webUser $phpPath ${owncloudPath}occ maintenance:mode --off
+sudo -u $webUser $phpPath ${nextcloudPath}occ maintenance:mode --off
 
 # database upgrade
-sudo -u $webUser $phpPath ${owncloudPath}occ upgrade
+sudo -u $webUser $phpPath ${nextcloudPath}occ upgrade
 
-# remove temporary owncloud upgrade directory
-rm -rf /tmp/owncloudUpgrade
+# remove temporary nextcloud upgrade directory
+cd
+rm -rf /tmp/nextcloudUpgrade
 
-echo "finished owncloud upgrade"
+echo "finished nextcloud upgrade"

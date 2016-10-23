@@ -1,9 +1,7 @@
-OwncloudUpgrade
-===============
+NextcloudUpgrade
+================
 
-This is a shell script that completely automates the owncloud upgrade process.
-
-**Attention:** Yet, it is necessary to activate all non-default Owncloud apps manually after running this upgrade. Owncloud will have no apps enabled after the upgrade.
+This is a shell script that automates the nextcloud upgrade process.
 
 Requirements
 ------------
@@ -18,13 +16,13 @@ Requirements
 Usage
 -----
 
-Run the script to upgrade your owncloud instance. The script expects the version number as only parameter.
+Run the script to upgrade your nextcloud instance. The script expects the version number as only parameter.
 The syntax must be the same as in the download link, i.e. *8.2.2*.
 
 License
 -------
 
-Copyright 2015 Pascal Wichmann
+Copyright 2016 Pascal Wichmann
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -41,4 +39,4 @@ Copyright 2015 Pascal Wichmann
 
 ----------------------------
 
-Scripts and documentation written by Pascal Wichmann, copyright (c) 2015
+Scripts and documentation written by Pascal Wichmann, copyright (c) 2016
