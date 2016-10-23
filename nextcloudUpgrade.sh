@@ -77,11 +77,11 @@ rsync -a nextcloud/ $nextcloudPath
 # set correct permissions on new files
 chown -R $webUser:$webUser $nextcloudPath
 
-# turn maintenance mode off
-sudo -u $webUser $phpPath ${nextcloudPath}occ maintenance:mode --off
-
 # database upgrade
 sudo -u $webUser $phpPath ${nextcloudPath}occ upgrade
+
+# turn maintenance mode off
+sudo -u $webUser $phpPath ${nextcloudPath}occ maintenance:mode --off
 
 # remove temporary nextcloud upgrade directory
 cd
