@@ -42,7 +42,7 @@ backupVersions=$((backupVersions-1))  # decrement backup versions count once aga
 
 while [ $backupVersions -ge 0 ]
 do
-  mv ${backupDir}/backup.${backupVersions} ${backupDir}/backup.$((backupVersions+1)) &> /dev/null
+  mv ${backupDir}/backup.${backupVersions} ${backupDir}/backup.$((backupVersions+1)) &> /dev/null || true
   backupVersions=$((backupVersions-1))
 done
 
