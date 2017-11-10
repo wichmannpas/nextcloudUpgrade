@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 # This script automatically upgrades a nextcloud installation and creates a backup of all important data before doing so
 # Copyright (c) 2015 Pascal Wichmann
 
