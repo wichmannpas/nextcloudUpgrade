@@ -80,11 +80,11 @@ rm -rf ${nextcloudPath}.bak
 # set correct permissions on new files
 chown -R $webUser:$webUser $nextcloudPath
 
-# database upgrade
-sudo -u $webUser $phpPath ${nextcloudPath}/occ upgrade
-
 # turn maintenance mode off
 sudo -u $webUser $phpPath ${nextcloudPath}/occ maintenance:mode --off
+
+# database upgrade
+sudo -u $webUser $phpPath ${nextcloudPath}/occ upgrade
 
 # remove temporary nextcloud upgrade directory
 cd
