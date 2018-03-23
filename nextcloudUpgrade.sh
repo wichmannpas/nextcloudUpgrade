@@ -2,7 +2,7 @@
 # This script automatically upgrades a nextcloud installation and creates a backup of all important data before doing so
 # Copyright (c) 2015 Pascal Wichmann
 
-nextcloudPath="/srv/http/nextcloud/" # change to fit path of you nextcloud installation
+nextcloudPath="/srv/http/nextcloud" # change to fit path of you nextcloud installation
 nextcloudDataPath="/srv/webdata/nextcloud/" # change to fit path of your nextcloud data directory
 backupDir="/backup" # change to fit path where your backup should be placed
 backupVersions=5
@@ -50,7 +50,7 @@ done
 mkdir -p ${backupDir}/backup.0/files
 
 # create backup of files
-rsync -a ${nextcloudPath} ${backupDir}/backup.0/files
+rsync -a ${nextcloudPath}/ ${backupDir}/backup.0/files
 rsync -a ${nextcloudDataPath} ${backupDir}/backup.0/data
 
 # create backup of database (if enabled)
@@ -69,19 +69,22 @@ cd /tmp/nextcloudUpgrade
 curl https://download.nextcloud.com/server/releases/nextcloud-${1}.tar.bz2 | tar -xj
 
 # turn nextcloud maintenance mode on
-sudo -u $webUser $phpPath ${nextcloudPath}occ maintenance:mode --on
+sudo -u $webUser $phpPath ${nextcloudPath}/occ maintenance:mode --on
 
 # move new files
-rsync -a nextcloud/ $nextcloudPath
+mv ${nextcloudPath}{,.bak}
+mv nextcloud $nextcloudPath
+cp ${nextcloudPath}{.bak,}/config/config.php
+rm -rf ${nextcloudPath}.bak
 
 # set correct permissions on new files
 chown -R $webUser:$webUser $nextcloudPath
 
 # database upgrade
-sudo -u $webUser $phpPath ${nextcloudPath}occ upgrade
+sudo -u $webUser $phpPath ${nextcloudPath}/occ upgrade
 
 # turn maintenance mode off
-sudo -u $webUser $phpPath ${nextcloudPath}occ maintenance:mode --off
+sudo -u $webUser $phpPath ${nextcloudPath}/occ maintenance:mode --off
 
 # remove temporary nextcloud upgrade directory
 cd
